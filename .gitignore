@@ -1,0 +1,16 @@
+# Executável gerado pelo go build
+*.exe
+/syncvault
+/bin/
+
+# Variáveis de ambiente locais
+.env
+
+# Editores
+.idea/
+.vscode/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -2,11 +2,14 @@
 // RESPONSABILIDADE: receber as requisições de /vendas e devolver status e corpo.
 //                   As regras R1, R2 e R3 não moram aqui: moram no VendaService.
 // ROTAS ATENDIDAS: POST /vendas.
-// SITUAÇÃO: montada. A rota entra quando POST /vendas for implementada.
+// SITUAÇÃO: implementada.
 
 package controller
 
 import (
+	"net/http"
+
+	"syncvault/internal/dto"
 	"syncvault/internal/service"
 
 	"github.com/gin-gonic/gin"
@@ -22,5 +25,22 @@ func NovoVendaController(service *service.VendaService) *VendaController {
 
 // RegistrarRotas liga cada verbo e caminho de /vendas a um método deste controller.
 func (c *VendaController) RegistrarRotas(r *gin.Engine) {
-	// Montada: POST /vendas entra aqui quando for implementada.
+	r.POST("/vendas", c.Registrar)
+}
+
+// Registrar atende POST /vendas.
+func (c *VendaController) Registrar(ctx *gin.Context) {
+	var requisicao dto.VendaRequestDTO
+	err := ctx.ShouldBindJSON(&requisicao)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	resposta, err := c.service.Registrar(requisicao)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+	ctx.JSON(http.StatusCreated, resposta)
 }

@@ -3,11 +3,12 @@
 //                   id de cada um.
 // REGRAS: nenhuma. Taxa e estoque de segurança são lidos pelo VendaService.
 // ROTAS ATENDIDAS: GET /canais.
-// SITUAÇÃO: montada. A lógica entra quando GET /canais for implementada.
+// SITUAÇÃO: implementada.
 
 package service
 
 import (
+	"syncvault/internal/dto"
 	"syncvault/internal/mapper"
 	"syncvault/internal/repository"
 )
@@ -21,4 +22,13 @@ type CanalService struct {
 
 func NovoCanalService(repository *repository.CanalRepository, mapper *mapper.CanalMapper) *CanalService {
 	return &CanalService{repository: repository, mapper: mapper}
+}
+
+// Listar devolve todos os canais, com a taxa e o estoque de segurança de cada um.
+func (s *CanalService) Listar() ([]dto.CanalResponseDTO, error) {
+	canais, err := s.repository.ListarTodos()
+	if err != nil {
+		return nil, err
+	}
+	return s.mapper.ParaRespostaLista(canais), nil
 }

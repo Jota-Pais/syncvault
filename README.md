@@ -21,7 +21,7 @@ Projeto Final da disciplina de Backend (Engenharia de Software, SATC). **Etapa 1
 
 | Nome | GitHub |
 |---|---|
-| {{Nome completo do João}} | [@Jota-Pais](https://github.com/Jota-Pais) |
+| João Carlos Pais | [@Jota-Pais](https://github.com/Jota-Pais) |
 | Gabriel Ugione | [@tpswrds1345ggzc-svg](https://github.com/tpswrds1345ggzc-svg) |
 | Arthur Santin | [@ArthurSSantin](https://github.com/ArthurSSantin) |
 

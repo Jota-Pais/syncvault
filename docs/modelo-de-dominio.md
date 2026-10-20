@@ -24,7 +24,13 @@ Um item à venda, com um estoque só para todos os canais.
 
 ### Canal
 
-Um lugar onde a loja vende: o balcão da loja física ou um marketplace.
+Um lugar onde a loja vende: o balcão da loja física ou um marketplace. Canal muda pouco, então os três já nascem cadastrados pela migration 4 e não existe rota para criar canal:
+
+| Canal | Taxa | Estoque de segurança |
+|---|---|---|
+| Balcão | 0% | 0 |
+| Mercado Livre | 16% | 2 |
+| Shopee | 20% | 2 |
 
 | Atributo | Tipo Go | Coluna | Obrigatório | Regra |
 |---|---|---|---|---|
@@ -93,3 +99,4 @@ Ficam em `migrations/`, uma tabela por arquivo, no formato do golang-migrate: `<
 | 1 | `000001_criar_produtos.up.sql` | Tabela `produtos` |
 | 2 | `000002_criar_canais.up.sql` | Tabela `canais` |
 | 3 | `000003_criar_vendas.up.sql` | Tabela `vendas`, com as duas chaves estrangeiras |
+| 4 | `000004_cadastrar_canais.up.sql` | Os três canais da loja: Balcão, Mercado Livre e Shopee |

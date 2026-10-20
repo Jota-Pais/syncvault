@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-const dsn = "host=localhost port=5437 user=projeto password=projeto dbname=projeto sslmode=disable"
+const dsn = "postgres://projeto:projeto@localhost:5439/projeto?sslmode=disable"
 
 func ConectarBanco() (*gorm.DB, error) {
 	return gorm.Open(postgres.Open(dsn), &gorm.Config{})

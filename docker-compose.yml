@@ -20,8 +20,9 @@ services:
       POSTGRES_PASSWORD: projeto
     # Publica a porta interna do banco no computador host.
     ports:
-      # Usa 5437 no host para não conflitar com os bancos das Aulas 08 e 09 (5433 a 5436).
-      - "5437:5432"
+      # Usa 5439 no host: 5433 a 5436 são das Aulas 08 e 09, 5438 é o exemplo da biblioteca
+      # e a 5437, padrão do template, já estava ocupada na máquina de um integrante.
+      - "5439:5432"
     # Guarda os dados fora do ciclo de vida do container.
     volumes:
       # Monta o volume nomeado no diretório padrão de dados do PostgreSQL.

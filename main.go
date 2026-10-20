@@ -14,6 +14,11 @@ func main() {
 		log.Fatal("não conectou no banco: ", err)
 	}
 
+	err = config.RodarMigrations()
+	if err != nil {
+		log.Fatal("não rodou as migrations: ", err)
+	}
+
 	r := gin.Default()
 
 	r.GET("/ping", func(c *gin.Context) {

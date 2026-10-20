@@ -1,17 +1,17 @@
-# model: as entidades (Aulas 03-04 e 08)
+# model: as entidades
 
-Cada classe daqui representa uma tabela do banco. São as entidades de `docs/modelo-de-dominio.md`.
+Cada struct daqui representa uma tabela do banco. São as entidades de `docs/modelo-de-dominio.md`.
 
-**Nesta etapa:** crie a entidade de todas as tabelas, completa. A API só sobe se cada entidade bater com a sua migration.
+O que toda entidade tem, e o equivalente em Java:
 
-O que toda entidade tem:
+| Em Go | Para quê | Em Java |
+|---|---|---|
+| Uma `struct` com um campo por coluna | A linha da tabela | Classe com `@Entity` |
+| O método `TableName()` | O nome da tabela que a migration criou (`produtos`, `canais`, `vendas`) | `@Table(name = "...")` |
+| A tag `gorm:"column:..."` em cada campo | A coluna que guarda o campo | `@Column` |
+| `ID int64` com `gorm:"column:id;primaryKey"` | A chave, gerada pelo banco | `@Id` e `@GeneratedValue` |
+| `ProdutoID` e `CanalID` em `Venda` | As chaves estrangeiras (muitos para um) | `@ManyToOne` |
 
-- `@Entity` e `@Table(name = "livros")`, com o nome da tabela que a migration criou;
-- `@Id` e `@GeneratedValue(strategy = GenerationType.IDENTITY)`: quem gera o id é o banco;
-- atributos `private`, com getters (encapsulamento);
-- `@ManyToOne` ou `@OneToMany` nos relacionamentos, com a chave estrangeira na migration;
-- um construtor sem argumentos `protected`, que o Hibernate exige.
+Os campos começam com maiúscula porque o GORM precisa enxergá-los de fora do pacote; em Go não existe getter. Quem protege a entidade é a regra de que ela nunca sai do Service: o Controller e o JSON só veem o DTO.
 
-A entidade nunca aparece no Controller nem no JSON: quem viaja pela API é o DTO.
-
-**Para consultar:** `Tarefa` e `Responsavel` em `Aula 09/exemplo_tarefas_resolvido`.
+Quem cria as tabelas é a migration, nunca o GORM. Quando a API sobe, `config.ValidarEntidades` confere se cada struct bate com a sua tabela.

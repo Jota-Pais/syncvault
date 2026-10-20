@@ -1,12 +1,15 @@
-# db/migration: a criação das tabelas (Aula 08)
+# migrations: a criação das tabelas
 
-Cada arquivo SQL daqui cria ou altera tabelas. O Flyway executa os arquivos em ordem quando a API sobe.
+Cada arquivo SQL daqui cria ou altera tabelas. Quando a API sobe, o golang-migrate (o Flyway do Go) aplica, em ordem, os que ainda não rodaram, e anota a versão na tabela `schema_migrations`.
 
-**Nesta etapa:** crie as migrations de todas as tabelas do modelo, uma tabela por arquivo.
+- O nome é `<versão>_<o_que_faz>.up.sql`, com a versão em 6 dígitos para os arquivos ficarem em ordem na pasta: `000001_criar_produtos.up.sql`.
+- A ordem é a da versão: a tabela que as outras referenciam nasce primeiro.
+- Tabela no plural e em `snake_case` (`produtos`, `preco_unitario_centavos`); chave estrangeira com `REFERENCES`.
+- **Nunca edite uma migration que já rodou.** Para corrigir, crie a próxima (`000005_...`). Se o banco ainda está só na sua máquina, recrie do zero com `docker compose down -v`.
 
-- O nome é `V<número>__<o_que_faz>.sql`, com **dois** sublinhados. Exemplo: `V1__criar_livros.sql`.
-- A ordem é a do número: crie primeiro a tabela que as outras referenciam.
-- Tabela no plural e em `snake_case` (`livros`, `data_retirada`); chave estrangeira com `REFERENCES`.
-- **Nunca edite uma migration que já rodou.** Para corrigir, crie a próxima (`V2__...`). Se o banco ainda está só na sua máquina, recrie do zero com `docker compose down -v`.
-
-**Para consultar:** `V1`, `V2` e `V3` em `Aula 09/exemplo_tarefas_resolvido/src/main/resources/db/migration`.
+| Versão | Arquivo | O que faz |
+|---|---|---|
+| 1 | `000001_criar_produtos.up.sql` | Cria a tabela `produtos` |
+| 2 | `000002_criar_canais.up.sql` | Cria a tabela `canais` |
+| 3 | `000003_criar_vendas.up.sql` | Cria a tabela `vendas`, com as chaves estrangeiras para `produtos` e `canais` |
+| 4 | `000004_cadastrar_canais.up.sql` | Cadastra os três canais: Balcão, Mercado Livre e Shopee |

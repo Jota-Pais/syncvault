@@ -1,70 +1,55 @@
-# api: o código do projeto
+# internal: o código do projeto
 
-**Objetivo desta pasta:** ter o projeto inteiro organizado em camadas. Todas as entidades com suas tabelas e classes criadas, a API simples funcionando e as regras de negócio implementadas.
+É o equivalente ao `src/main/java/api` do template da disciplina. Em Go, o que está dentro de `internal/` só pode ser importado pelo próprio projeto.
 
 ## As pastas
 
-Uma pasta por camada. Cada uma tem um `README.md` explicando o que fazer ali.
+Uma pasta por camada, e cada pasta é um pacote Go. Cada uma tem um `README.md` explicando o que mora ali.
 
-| Pasta | O que mora ali | Uma classe por entidade |
+| Pasta | O que mora ali | Um arquivo por entidade |
 |---|---|---|
-| [controller/](controller) | A porta de entrada da API | `LivroController` |
-| [service/](service) | As regras do sistema | `LivroService` |
-| [mapper/](mapper) | A conversão entre DTO e entidade | `LivroMapper` |
-| [repository/](repository) | A conversa com o banco | `LivroRepository` |
-| [model/](model) | As entidades | `Livro` |
-| [dto/](dto) | O JSON que entra e o que sai | `LivroRequestDTO`, `LivroResponseDTO` |
-| [config/](config) | Configuração | Não se aplica |
+| [controller/](controller) | A porta de entrada da API | `produto_controller.go` → `ProdutoController` |
+| [service/](service) | As regras do sistema | `produto_service.go` → `ProdutoService` |
+| [mapper/](mapper) | A conversão entre DTO e entidade | `produto_mapper.go` → `ProdutoMapper` |
+| [repository/](repository) | A conversa com o banco | `produto_repository.go` → `ProdutoRepository` |
+| [model/](model) | As entidades | `produto.go` → `Produto` |
+| [dto/](dto) | O JSON que entra e o que sai | `produto_dto.go` → `ProdutoRequestDTO` e `ProdutoResponseDTO` |
+| [config/](config) | Conexão, migrations, conferência das entidades e Swagger | Não se aplica |
 
-## Passo a passo
+As migrations ficam fora daqui, em [`migrations/`](../migrations), na raiz.
 
-Para **cada** entidade de `docs/modelo-de-dominio.md`, nesta ordem:
+## Como as camadas se ligam
 
-1. **Migration**, em `src/main/resources/db/migration`: a tabela, as colunas e as chaves estrangeiras.
-2. **Entidade**, em `model/`: os atributos e os relacionamentos, iguais aos da migration.
-3. **Repository**, em `repository/`: a interface que estende `JpaRepository`.
-4. **DTOs**, em `dto/`: o de entrada, com as validações, e o de saída.
-5. **Mapper**, **Service** e **Controller**: só a classe, com as dependências no construtor e o comentário no topo.
+Em Java, o Spring cria cada classe e entrega as dependências pelo construtor. Em Go, quem faz isso é o `main.go`, com as funções `NovoXxx`, de baixo para cima:
 
-Suba a API depois de cada entidade (`./mvnw spring-boot:run`). Se a entidade não bater com a tabela, a API não sobe e o erro diz qual coluna está errada.
+1. Repository e Mapper, que só dependem do banco ou de nada;
+2. Service, que recebe o seu Repository e o seu Mapper;
+3. Controller, que recebe o seu Service e registra as rotas com `RegistrarRotas`.
 
-Com todas as entidades criadas:
+Se faltar uma peça, o projeto nem compila. Se uma entidade não bater com a sua tabela, a API não sobe (`config.ValidarEntidades`).
 
-1. Escolha a mais simples e faça as três rotas da API simples: `POST`, `GET` e `GET /{id}`.
-2. Implemente as regras de negócio do README no Service, com as rotas que elas precisam. Quando uma regra é violada, o Service lança `RegraDeNegocioException` e o cliente recebe `400` com a mensagem da regra.
+## O comentário no topo de cada arquivo
 
-As classes que nenhuma rota usa ainda ficam montadas.
+Todo arquivo que o grupo cria começa com um comentário dizendo o que ele é e o que faz. É a documentação da estrutura.
 
-## O comentário no topo de cada classe
-
-Toda classe que o grupo cria começa com um comentário dizendo o que ela é e o que faz. É a documentação da estrutura.
-
-```java
+```go
 // CAMADA: Service
-// RESPONSABILIDADE: regras de negócio dos empréstimos.
-// REGRAS: R1 (no máximo 3 empréstimos em aberto por leitor) e
-//         R2 (livro emprestado não pode ser emprestado de novo).
-// ROTAS ATENDIDAS: as de /emprestimos em docs/contrato-da-api.md.
-// SITUAÇÃO: montada. A lógica entra quando a rota for implementada.
-@Service
-public class EmprestimoService {
+// RESPONSABILIDADE: registrar vendas de qualquer canal no estoque único.
+// REGRAS: R1 (a venda não passa do estoque do produto),
+//         R2 (o preço, descontada a taxa do canal, não fica abaixo do custo) e
+//         R3 (a venda não deixa o estoque abaixo do estoque de segurança do canal).
+// ROTAS ATENDIDAS: POST /vendas.
+// SITUAÇÃO: implementada.
 
-    private final EmprestimoRepository repository;
-    private final EmprestimoMapper mapper;
-
-    public EmprestimoService(EmprestimoRepository repository, EmprestimoMapper mapper) {
-        this.repository = repository;
-        this.mapper = mapper;
-    }
-}
+package service
 ```
 
-| Linha | O que escrever | Em quais classes |
+| Linha | O que escrever | Em quais arquivos |
 |---|---|---|
-| `CAMADA` | Controller, Service, Mapper, Repository, Model ou DTO | Todas |
-| `RESPONSABILIDADE` | Uma frase: o que esta classe faz no projeto | Todas |
-| `REGRAS` | As regras do README que ela aplica | Service |
-| `ROTAS ATENDIDAS` | As rotas de `docs/contrato-da-api.md` que ela atende | Controller e Service |
-| `SITUAÇÃO` | `montada` ou `implementada` | Todas |
+| `CAMADA` | Controller, Service, Mapper, Repository, Model, DTO ou Config | Todos |
+| `RESPONSABILIDADE` | Uma frase: o que este arquivo faz no projeto | Todos |
+| `REGRAS` | As regras do README que ele aplica | Service |
+| `ROTAS ATENDIDAS` | As rotas de `docs/contrato-da-api.md` que ele atende | Controller e Service |
+| `SITUAÇÃO` | `montada` ou `implementada` | Todos |
 
-A classe do exemplo está **montada**: existe, está ligada às outras e diz o que vai fazer, mas ainda não tem lógica. Quando ganhar os métodos, a linha `SITUAÇÃO` muda para `implementada`.
+A linha em branco entre o comentário e o `package` é proposital: sem ela, o Go trataria o cabeçalho como a documentação do pacote.

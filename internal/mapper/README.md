@@ -1,16 +1,17 @@
-# mapper: a conversão entre DTO e entidade (Aula 09)
+# mapper: a conversão entre DTO e entidade
 
 O Mapper transforma o DTO que chegou em entidade, e a entidade em DTO para devolver.
 
-**Nesta etapa:** crie um Mapper para cada entidade. Precisam ter métodos o da API simples (`toEntity`, `toResponse` e `toResponseList`) e os que as rotas das regras de negócio usam.
-
 | Método | O que converte | Usado em |
 |---|---|---|
-| `toEntity(requestDTO)` | DTO de entrada em entidade nova | `POST` |
-| `toResponse(entidade)` | Entidade em DTO de saída | Toda resposta |
-| `toResponseList(entidades)` | Lista de entidades em lista de DTOs | `GET` de listagem |
-| `updateEntity(entidade, requestDTO)` | Copia os campos do DTO para uma entidade que já existe | `PUT`, nas próximas etapas |
+| `ParaEntidade(requisicao)` | DTO de entrada em entidade nova, ainda sem id | `POST` |
+| `ParaResposta(entidade)` | Entidade em DTO de saída | Toda resposta |
+| `ParaRespostaLista(entidades)` | Lista de entidades em lista de DTOs; sem item, sai `[]`, nunca `null` | `GET` de listagem |
 
-O Mapper não consulta o banco e não tem regra de negócio. Quando a conversão precisa de outra entidade, o Service busca e entrega pronta.
+O Mapper não consulta o banco e não tem regra de negócio. Quando a conversão precisa de outra entidade, o Service busca e entrega pronta: o `VendaMapper` recebe o produto e o canal já buscados, e usa o `ProdutoMapper` e o `CanalMapper` para montá-los dentro da resposta. O `recebidoCentavos` também chega pronto, porque depende da taxa do canal (R2), e quem calcula é o `VendaService`.
 
-**Para consultar:** `TarefaMapper` em `Aula 09/exemplo_tarefas_resolvido`.
+| Arquivo | Situação |
+|---|---|
+| `produto_mapper.go` | Implementado |
+| `canal_mapper.go` | Em parte: só a conversão para a resposta, porque não há rota de cadastro de canal |
+| `venda_mapper.go` | Implementado |

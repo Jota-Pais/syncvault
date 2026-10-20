@@ -27,6 +27,13 @@ func (c *CanalController) RegistrarRotas(r *gin.Engine) {
 }
 
 // Listar atende GET /canais.
+//
+// @Summary     Lista os canais
+// @Description Lista os canais de venda, com a taxa e o estoque de segurança de cada um. É daqui que sai o canalId de uma venda.
+// @Tags        canais
+// @Produce     json
+// @Success     200 {array} dto.CanalResponseDTO
+// @Router      /canais [get]
 func (c *CanalController) Listar(ctx *gin.Context) {
 	resposta, err := c.service.Listar()
 	if err != nil {

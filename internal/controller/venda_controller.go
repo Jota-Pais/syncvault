@@ -29,6 +29,15 @@ func (c *VendaController) RegistrarRotas(r *gin.Engine) {
 }
 
 // Registrar atende POST /vendas.
+//
+// @Summary     Registra uma venda
+// @Description Registra uma venda de qualquer canal e desconta do estoque único. As regras são conferidas nesta ordem: R2 (o preço, descontada a taxa do canal, não fica abaixo do custo), R1 (a quantidade não passa do estoque) e R3 (a venda não deixa o estoque abaixo do estoque de segurança do canal). Regra violada devolve 400, com a regra na mensagem.
+// @Tags        vendas
+// @Accept      json
+// @Produce     json
+// @Param       venda body     dto.VendaRequestDTO true "Venda a registrar"
+// @Success     201   {object} dto.VendaResponseDTO
+// @Router      /vendas [post]
 func (c *VendaController) Registrar(ctx *gin.Context) {
 	var requisicao dto.VendaRequestDTO
 	err := ctx.ShouldBindJSON(&requisicao)

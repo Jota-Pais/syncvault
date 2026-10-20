@@ -11,6 +11,7 @@
 | Data e hora | ISO 8601 com fuso horário: `2026-10-20T19:30:00-03:00` |
 | Erros | Sempre no formato `ErroDTO` (ver [Erros](#erros)) |
 | Documentação viva | `http://localhost:8080/swagger/index.html` |
+| Contrato OpenAPI, para importar no Postman | `http://localhost:8080/swagger/doc.json` |
 
 ## Rotas
 

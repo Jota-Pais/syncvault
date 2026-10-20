@@ -61,6 +61,7 @@ As regras são conferidas na ordem R2, R1 e R3. Quando uma delas barra a venda, 
 | Banco de dados | PostgreSQL 16, em Docker |
 | Migrations | golang-migrate |
 | Documentação da API | swaggo (Swagger UI) |
+| Execução | Docker Compose: o banco e a API, compilada pelo `Dockerfile` |
 
 ## Go no lugar de Java
 
@@ -87,7 +88,7 @@ As regras são conferidas na ordem R2, R1 e R3. Quando uma delas barra a venda, 
 
 | Critério | No SyncVault |
 |---|---|
-| P1 Sobe pelo README | [Como executar](#como-executar): `docker compose up -d` e `go run .` |
+| P1 Sobe pelo README | [Como executar](#como-executar): só Docker, com `docker compose up -d --build`, que sobe o banco e a API sem precisar instalar Go |
 | P2 Camadas | Uma pasta por camada em `internal/`: `controller`, `service`, `mapper`, `repository`, `model` e `dto`, com os nomes da convenção (`ProdutoController`, `ProdutoService`...) |
 | P3 Banco e entidades | As 4 migrations em `migrations/` criam as tabelas e as chaves estrangeiras; as structs de `internal/model` batem com elas, e `config.ValidarEntidades` confere isso a cada subida. O GORM nunca cria tabela (não usamos `AutoMigrate`) |
 | P4 DTOs | `internal/dto` tem o DTO de entrada, com as validações, e o de saída das três entidades. Nenhum arquivo de `internal/controller` importa `internal/model` |
@@ -114,6 +115,8 @@ Os arquivos de cada entidade ficam em `internal/<camada>/`, com o nome da entida
 
 | Arquivo | O que faz |
 |---|---|
+| `Dockerfile` | Monta a imagem da API: compila o Go numa etapa e deixa só o executável e as migrations na imagem final |
+| `docker-compose.yml` | Sobe o banco e a API; a API só liga depois que o banco está pronto |
 | `main.go` | Liga tudo: conecta no banco, roda as migrations, confere as entidades, monta as camadas e sobe a API na porta 8080 |
 | `internal/config/database.go` | Abre a conexão com o PostgreSQL |
 | `internal/config/migrations.go` | Aplica as migrations que ainda não rodaram |
@@ -204,19 +207,34 @@ O contrato completo, com todas as rotas e os DTOs, está em [docs/contrato-da-ap
 
 ## Como executar
 
-Pré-requisitos: [Go](https://go.dev/dl/) 1.21 ou mais novo, Docker Desktop aberto e Git. O projeto pede o Go 1.27; com uma versão mais antiga, o próprio Go baixa a 1.27 sozinho na primeira vez.
+### Só com Docker: o jeito para rodar e corrigir
+
+Não precisa instalar Go nem nada além do Docker: a API é compilada dentro do próprio Docker.
+
+**Pré-requisitos:** Git e o [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado e **aberto**. Ele está pronto quando aparece **Engine running** no canto inferior esquerdo da janela dele.
 
 ```bash
 git clone https://github.com/Jota-Pais/syncvault.git
 cd syncvault
-
-docker compose up -d          # sobe o PostgreSQL na porta 5439
-go run .                      # baixa as dependências, aplica as migrations e sobe a API na porta 8080
+docker compose up -d --build
 ```
 
-Na primeira vez, o `go run .` demora um pouco para baixar as bibliotecas. A API está no ar quando aparece `Listening and serving HTTP on :8080`. No Windows, o firewall pode perguntar se permite o acesso: pode permitir na rede privada.
+O último comando faz tudo:
 
-Com a API no ar:
+1. monta a imagem da API pelo `Dockerfile`, compilando o código Go dentro do Docker;
+2. sobe o PostgreSQL, na porta 5439;
+3. espera o banco ficar pronto e sobe a API, na porta 8080;
+4. a API aplica as migrations sozinha: cria as tabelas e cadastra os três canais.
+
+Na primeira vez, ele demora de 2 a 5 minutos, porque baixa a imagem do Go e as bibliotecas. Nas próximas, leva segundos.
+
+Para conferir se está tudo no ar:
+
+```bash
+docker compose ps
+```
+
+Tem que aparecer o `syncvault-postgres` como `healthy` e o `syncvault-api` como `Up`. Aí é só abrir no navegador:
 
 | Endereço | O que é |
 |---|---|
@@ -225,7 +243,9 @@ Com a API no ar:
 
 Para testar as rotas, use o Swagger UI ou o **Postman**. No Postman, importe todas as rotas de uma vez: **Import** → **Link** → `http://localhost:8080/swagger/doc.json`.
 
-Para ver as regras funcionando: cadastre um produto com custo de R$ 60,00 e 5 unidades, e veja os canais em `GET /canais`. Depois:
+### Para ver as regras funcionando
+
+No Swagger UI, cadastre um produto com custo de R$ 60,00 e 5 unidades (`POST /produtos` com `"custoCentavos": 6000` e `"estoque": 5`) e veja os canais em `GET /canais`. Depois, em `POST /vendas`:
 
 1. Venda 1 unidade pelo Mercado Livre (canal 2) a R$ 65,00: a R2 barra, porque depois da comissão a loja receberia menos que o custo.
 2. Venda 1 unidade pelo Mercado Livre a R$ 109,90: passa, e o estoque cai para 4.
@@ -233,7 +253,36 @@ Para ver as regras funcionando: cadastre um produto com custo de R$ 60,00 e 5 un
 4. Venda 2 unidades pela Shopee (canal 3) a R$ 99,90: a R3 barra, porque a Shopee não vende as últimas 2.
 5. Venda 4 unidades pelo Balcão a R$ 99,90: a R1 barra, porque só há 3.
 
-Para parar: `Ctrl+C` na API e `docker compose stop` no banco. Para apagar o banco e rodar as migrations do zero: `docker compose down -v` e suba de novo.
+### Comandos do dia a dia
+
+Todos rodam na pasta do projeto.
+
+| Para | Comando |
+|---|---|
+| Ver se está tudo no ar | `docker compose ps` |
+| Acompanhar o log da API (cada requisição aparece aqui) | `docker compose logs -f api` (sai com `Ctrl+C`) |
+| Parar tudo, guardando os dados | `docker compose stop` |
+| Ligar de novo | `docker compose start` |
+| Apagar o banco e começar do zero | `docker compose down -v` e depois `docker compose up -d --build` |
+
+### Se algo der errado
+
+| O que aparece | O que fazer |
+|---|---|
+| `error during connect` ou `cannot find the file specified` com `dockerDesktopLinuxEngine` | O Docker Desktop está fechado. Abra, espere o **Engine running** e rode o comando de novo |
+| `port is already allocated` ou `address already in use` | Outro programa está usando a porta 8080 ou a 5439. Veja quem é com `docker ps` e pare o outro container, ou feche o programa |
+| O Swagger UI não abre logo depois do comando | A API só sobe depois que o banco fica pronto. Espere alguns segundos e confira com `docker compose ps`; se o `syncvault-api` não estiver `Up`, `docker compose logs api` mostra o motivo |
+
+### Para desenvolver: a API direto na máquina
+
+Quem vai mexer no código roda a API com o Go, e só o banco no Docker. Pré-requisito a mais: [Go](https://go.dev/dl/) 1.21 ou mais novo (o projeto pede o 1.27; com uma versão mais antiga, o próprio Go baixa a 1.27 sozinho na primeira vez).
+
+```bash
+docker compose up -d postgres   # só o banco, na porta 5439
+go run .                        # aplica as migrations e sobe a API na porta 8080
+```
+
+Se a API do Docker estiver ligada, ela ocupa a porta 8080: pare antes com `docker compose stop api`. No Windows, o firewall pode perguntar se permite o acesso do `go run`: pode permitir na rede privada.
 
 Quem mudar os comentários `@` de uma rota precisa gerar o Swagger de novo:
 

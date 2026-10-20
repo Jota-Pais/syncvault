@@ -54,5 +54,9 @@ func main() {
 	canalController.RegistrarRotas(r)
 	vendaController.RegistrarRotas(r)
 
-	r.Run(":8080")
+	log.Println("SyncVault no ar: http://localhost:8080/swagger/index.html")
+	err = r.Run(":8080")
+	if err != nil {
+		log.Fatal("a API não subiu na porta 8080 (ela já está em uso?): ", err)
+	}
 }

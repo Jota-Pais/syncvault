@@ -14,7 +14,7 @@ import (
 )
 
 func RodarMigrations() error {
-	m, err := migrate.New("file://migrations", dsn)
+	m, err := migrate.New("file://migrations", enderecoDoBanco())
 	if err != nil {
 		return err
 	}

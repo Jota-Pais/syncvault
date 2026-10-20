@@ -1,0 +1,7 @@
+# O que não precisa entrar na imagem da API: deixa o build mais rápido.
+.git
+*.exe
+.env
+.idea/
+.vscode/
+docs/

@@ -38,6 +38,25 @@ services:
       # Tenta cinco vezes antes de marcar o serviço como unhealthy.
       retries: 5
 
+  # Declara o serviço da API, compilada pelo Dockerfile desta pasta. Com ele,
+  # "docker compose up -d --build" sobe tudo sem precisar de Go na máquina.
+  # Para rodar a API com "go run .", suba só o banco: "docker compose up -d postgres".
+  api:
+    # Monta a imagem a partir do Dockerfile da raiz do projeto.
+    build: .
+    # Define um nome fixo para localizar o container facilmente.
+    container_name: syncvault-api
+    # Lá dentro, o banco se chama postgres (o nome do serviço) e usa a porta 5432.
+    environment:
+      DATABASE_URL: postgres://projeto:projeto@postgres:5432/projeto?sslmode=disable
+    # Publica a API na porta 8080 do computador host.
+    ports:
+      - "8080:8080"
+    # Só liga a API depois que o healthcheck disser que o banco está pronto.
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 # Declara os volumes nomeados usados pelos serviços.
 volumes:
   # Mantém os dados do PostgreSQL entre reinicializações.

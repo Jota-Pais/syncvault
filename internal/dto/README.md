@@ -19,4 +19,4 @@ Cada entidade tem um arquivo com os seus dois DTOs. Em Java seriam dois `record`
 | `produto_dto.go` | `ProdutoRequestDTO` e `ProdutoResponseDTO` |
 | `canal_dto.go` | `CanalRequestDTO` (nenhuma rota usa nesta etapa) e `CanalResponseDTO` |
 | `venda_dto.go` | `VendaRequestDTO` e `VendaResponseDTO` |
-| `erro.go` | Em construção (issue #1). `ErroDTO` e `CampoErroDTO`, o formato único de erro |
+| `erro.go` | `ErroDTO` e `CampoErroDTO`, o formato único de erro, e `NovoErro`, que monta um erro com a lista `campos` vazia |

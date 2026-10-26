@@ -48,6 +48,7 @@ func main() {
 	vendaController := controller.NovoVendaController(vendaService)
 
 	r := gin.Default()
+	r.Use(controller.TratarErros())
 	config.RegistrarSwagger(r)
 
 	produtoController.RegistrarRotas(r)

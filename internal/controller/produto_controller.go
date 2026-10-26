@@ -41,6 +41,7 @@ func (c *ProdutoController) RegistrarRotas(r *gin.Engine) {
 // @Produce     json
 // @Param       produto body     dto.ProdutoRequestDTO true "Produto a cadastrar"
 // @Success     201     {object} dto.ProdutoResponseDTO
+// @Failure     400     {object} dto.ErroDTO
 // @Router      /produtos [post]
 func (c *ProdutoController) Criar(ctx *gin.Context) {
 	var requisicao dto.ProdutoRequestDTO
@@ -82,6 +83,8 @@ func (c *ProdutoController) Listar(ctx *gin.Context) {
 // @Produce     json
 // @Param       id  path     int true "Id do produto"
 // @Success     200 {object} dto.ProdutoResponseDTO
+// @Failure     400 {object} dto.ErroDTO
+// @Failure     404 {object} dto.ErroDTO
 // @Router      /produtos/{id} [get]
 func (c *ProdutoController) BuscarPorID(ctx *gin.Context) {
 	id, err := lerID(ctx)

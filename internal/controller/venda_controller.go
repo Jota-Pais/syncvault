@@ -37,6 +37,8 @@ func (c *VendaController) RegistrarRotas(r *gin.Engine) {
 // @Produce     json
 // @Param       venda body     dto.VendaRequestDTO true "Venda a registrar"
 // @Success     201   {object} dto.VendaResponseDTO
+// @Failure     400   {object} dto.ErroDTO
+// @Failure     404   {object} dto.ErroDTO
 // @Router      /vendas [post]
 func (c *VendaController) Registrar(ctx *gin.Context) {
 	var requisicao dto.VendaRequestDTO

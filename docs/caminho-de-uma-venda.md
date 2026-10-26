@@ -97,7 +97,7 @@ Quando um pedido é barrado, a requisição não chega ao fim do caminho acima. 
 | R3 violada | `internal/service/venda_service.go`, `conferirEstoque` (segunda conferência) | `400` |
 | Duas vendas ao mesmo tempo disputando a última peça | `internal/repository/venda_repository.go`, `SalvarDescontandoEstoque`: o `UPDATE` só altera a linha se sobrar o estoque de segurança, e o banco executa um de cada vez. A venda que perde recebe `false`, e `Registrar` confere de novo com o estoque atual | `400` (R1 ou R3) |
 
-Sobre a última linha: a venda que perdeu a disputa vê o estoque já descontado e recebe a mensagem da regra que passou a valer, R1 ou R3. Se o estoque tiver voltado a ser suficiente entre as duas leituras, `Registrar` devolve o erro simples "o estoque mudou durante a venda; tente de novo". O status desse caso depende do `TratarErros`, que ainda está sendo feito.
+Sobre a última linha: a venda que perdeu a disputa vê o estoque já descontado e recebe a mensagem da regra que passou a valer, R1 ou R3. Se o estoque ainda for suficiente na segunda leitura, `Registrar` devolve um `RegraDeNegocioError` de R1 ("outra venda deste produto descontou o estoque ao mesmo tempo"), que também vira `400`.
 
 ## 3. Por que a regra não fica no Controller nem no Repository
 

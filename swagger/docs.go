@@ -89,6 +89,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/dto.ProdutoResponseDTO"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErroDTO"
+                        }
                     }
                 }
             }
@@ -116,6 +122,18 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/dto.ProdutoResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErroDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErroDTO"
                         }
                     }
                 }
@@ -151,12 +169,37 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/dto.VendaResponseDTO"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErroDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErroDTO"
+                        }
                     }
                 }
             }
         }
     },
     "definitions": {
+        "dto.CampoErroDTO": {
+            "type": "object",
+            "properties": {
+                "campo": {
+                    "type": "string",
+                    "example": "nome"
+                },
+                "mensagem": {
+                    "type": "string",
+                    "example": "nome é obrigatório"
+                }
+            }
+        },
         "dto.CanalResponseDTO": {
             "type": "object",
             "properties": {
@@ -177,6 +220,37 @@ const docTemplate = `{
                     "description": "A comissão que o canal fica de cada venda, em percentual inteiro (16 = 16%).",
                     "type": "integer",
                     "example": 16
+                }
+            }
+        },
+        "dto.ErroDTO": {
+            "type": "object",
+            "properties": {
+                "caminho": {
+                    "type": "string",
+                    "example": "/produtos/999"
+                },
+                "campos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.CampoErroDTO"
+                    }
+                },
+                "erro": {
+                    "type": "string",
+                    "example": "Not Found"
+                },
+                "mensagem": {
+                    "type": "string",
+                    "example": "Produto não encontrado: 999"
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 404
+                },
+                "timestamp": {
+                    "type": "string",
+                    "example": "2026-10-20T19:30:00-03:00"
                 }
             }
         },

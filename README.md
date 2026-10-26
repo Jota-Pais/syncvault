@@ -124,6 +124,8 @@ Os arquivos de cada entidade ficam em `internal/<camada>/`, com o nome da entida
 | `internal/config/swagger.go` | Publica o Swagger UI |
 | `internal/service/erros.go` | Os erros do domínio: não encontrado (`404`) e regra violada (`400`) |
 | `internal/controller/parametros.go` | Lê o `{id}` do caminho; um id que não é número vira `400` |
+| `internal/controller/tratamento_de_erros.go` | `TratarErros`: transforma cada erro das rotas em `400`, `404` ou `500` no formato `ErroDTO` |
+| `internal/dto/erro.go` | `ErroDTO` e `CampoErroDTO`, o formato único de erro |
 
 Canal não tem rota de cadastro porque os três canais nascem com a migration 4, e canal quase nunca muda. O `CanalRequestDTO` existe para quando houver esse cadastro.
 
@@ -298,8 +300,9 @@ swag init -g internal/config/swagger.go -o swagger --parseInternal --outputTypes
 | Desenho | Completo: problema e regras neste README, modelo e contrato em `docs/` |
 | Estrutura | As 3 entidades têm migration, entidade, Repository, DTOs, Mapper, Service e Controller |
 | API e regras | Produtos com as 3 rotas da API simples; listagem de canais; venda com R1, R2 e R3 implementadas e testadas, inclusive com vendas simultâneas |
+| Erros | Todo `400` e `404` sai no formato `ErroDTO`, montado em um lugar só pelo `TratarErros` |
 
-**Ainda não funciona:** o tratamento central de erros (`controller.TratarErros`) e o `ErroDTO`, que estão sendo feitos. Até lá, a API já detecta cada erro com a mensagem certa, mas a resposta ainda não sai no formato acima. Também não respondem as rotas planejadas: `GET /canais/{id}`, `GET /vendas` e `GET /vendas/{id}`.
+**Ainda não funciona:** as rotas planejadas `GET /canais/{id}`, `GET /vendas` e `GET /vendas/{id}`, que nenhuma regra usa nesta etapa.
 
 ## Documentação
 
@@ -307,4 +310,5 @@ swag init -g internal/config/swagger.go -o swagger --parseInternal --outputTypes
 |---|---|
 | [Modelo de domínio](docs/modelo-de-dominio.md) | Entidades, relacionamentos, diagrama das tabelas, migrations |
 | [Contrato da API](docs/contrato-da-api.md) | Todas as rotas, os DTOs, exemplos de JSON e erros |
+| [O caminho de uma venda](docs/caminho-de-uma-venda.md) | `POST /vendas` classe por classe, em diagrama, e onde cada pedido é barrado |
 | [Autoavaliação](docs/autoavaliacao.md) | Os critérios da revisão do código, marcados pelo grupo |

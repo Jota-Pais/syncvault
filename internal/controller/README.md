@@ -17,4 +17,4 @@ Cada entidade tem o seu Controller, com o método `RegistrarRotas`, que liga cad
 | `canal_controller.go` | `GET /canais` |
 | `venda_controller.go` | `POST /vendas` |
 | `parametros.go` | Lê o `{id}` do caminho; um id que não é número vira `400` |
-| `tratamento_de_erros.go` | Em construção. `TratarErros`, que transforma cada erro em `400` ou `404` no formato `ErroDTO` (o papel do `ApiExceptionHandler`) |
+| `tratamento_de_erros.go` | `TratarErros`, que transforma cada erro em `400`, `404` ou `500` no formato `ErroDTO` (o papel do `ApiExceptionHandler`) |

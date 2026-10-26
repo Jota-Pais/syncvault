@@ -169,6 +169,7 @@ As mensagens das outras duas regras, com o mesmo casaco:
 |---|---|---|
 | R1 | Há 4 casacos e o Balcão tenta vender 5 | `R1: estoque insuficiente: há 4 unidades do produto 1 e a venda pede 5` |
 | R3 | Há 3 casacos e o Mercado Livre tenta vender 2 | `R3: o canal Mercado Livre não vende as últimas 2 unidades: há 3 em estoque, então ele vende no máximo 1` |
+| R1 | Duas vendas disputam o mesmo casaco e a outra desconta o estoque primeiro | `R1: outra venda deste produto descontou o estoque ao mesmo tempo; confira o estoque e tente de novo` |
 
 | Status | Quando acontece neste projeto |
 |---|---|

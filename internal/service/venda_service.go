@@ -10,7 +10,6 @@
 package service
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 	"time"
@@ -90,7 +89,7 @@ func (s *VendaService) Registrar(requisicao dto.VendaRequestDTO) (dto.VendaRespo
 		if err != nil {
 			return dto.VendaResponseDTO{}, err
 		}
-		return dto.VendaResponseDTO{}, errors.New("o estoque mudou durante a venda; tente de novo")
+		return dto.VendaResponseDTO{}, &RegraDeNegocioError{Mensagem: "R1: outra venda deste produto descontou o estoque ao mesmo tempo; confira o estoque e tente de novo"}
 	}
 
 	// Lê o produto de novo para a resposta mostrar o estoque depois da venda.

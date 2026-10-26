@@ -1,5 +1,5 @@
 // CAMADA: DTO
-// RESPONSABILIDADE: formata o erro para padrao 400 e 404.
+// RESPONSABILIDADE: o formato único de erro da API, o mesmo no 400, no 404 e no 500.
 // SITUAÇÃO: implementada.
 
 package dto

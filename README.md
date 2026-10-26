@@ -92,7 +92,7 @@ As regras são conferidas na ordem R2, R1 e R3. Quando uma delas barra a venda, 
 | P2 Camadas | Uma pasta por camada em `internal/`: `controller`, `service`, `mapper`, `repository`, `model` e `dto`, com os nomes da convenção (`ProdutoController`, `ProdutoService`...) |
 | P3 Banco e entidades | As 4 migrations em `migrations/` criam as tabelas e as chaves estrangeiras; as structs de `internal/model` batem com elas, e `config.ValidarEntidades` confere isso a cada subida. O GORM nunca cria tabela (não usamos `AutoMigrate`) |
 | P4 DTOs | `internal/dto` tem o DTO de entrada, com as validações, e o de saída das três entidades. Nenhum arquivo de `internal/controller` importa `internal/model` |
-| P5 Estrutura completa e documentada | As três entidades têm Repository, Mapper, Service e Controller, ligados pelo construtor em `main.go`; todo arquivo começa com o cabeçalho `CAMADA`, `RESPONSABILIDADE` e `SITUAÇÃO`; o [mapa da estrutura](#arquitetura) lista todos |
+| P5 Estrutura completa e documentada | As três entidades têm Repository, Mapper, Service e Controller, ligados pelo construtor em `main.go`; todo arquivo de `internal/` começa com o cabeçalho `CAMADA`, `RESPONSABILIDADE` e `SITUAÇÃO`; o [mapa da estrutura](#arquitetura) lista todos |
 | P6 API simples | `POST /produtos`, `GET /produtos` e `GET /produtos/{id}`: campo inválido devolve `400`, e id que não existe devolve `404` pelo `ProdutoNaoEncontrado` do Service |
 | P7 Regras implementadas | R1, R2 e R3 no `VendaService`; regra violada lança `RegraDeNegocioError`, que vira `400` |
 | P8 Regras que atendem ao tema | Ver [O problema](#o-problema): as três regras nascem dos prejuízos de vender em vários canais com estoque separado |
@@ -122,6 +122,7 @@ Os arquivos de cada entidade ficam em `internal/<camada>/`, com o nome da entida
 | `internal/config/migrations.go` | Aplica as migrations que ainda não rodaram |
 | `internal/config/validar_entidades.go` | Confere se cada struct de `model` bate com a sua tabela |
 | `internal/config/swagger.go` | Publica o Swagger UI |
+| `swagger/` | O contrato OpenAPI gerado pelo `swag` a partir dos comentários `@` dos Controllers. Não se edita à mão |
 | `internal/service/erros.go` | Os erros do domínio: não encontrado (`404`) e regra violada (`400`) |
 | `internal/controller/parametros.go` | Lê o `{id}` do caminho; um id que não é número vira `400` |
 | `internal/controller/tratamento_de_erros.go` | `TratarErros`: transforma cada erro das rotas em `400`, `404` ou `500` no formato `ErroDTO` |

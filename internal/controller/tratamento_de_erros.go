@@ -20,6 +20,9 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+// TratarErros é o middleware que responde por todas as rotas quando algo dá errado,
+// como o @RestControllerAdvice do Java: os Controllers só entregam o erro com
+// ctx.Error(err), e é aqui que ele vira status e ErroDTO.
 func TratarErros() gin.HandlerFunc {
 	// Faz o validador chamar cada campo pelo nome do JSON (canalId), e não pelo da struct (CanalID).
 	if validacao, ok := binding.Validator.Engine().(*validator.Validate); ok {

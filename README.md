@@ -2,7 +2,7 @@
 
 Estoque único para uma loja que vende ao mesmo tempo no balcão, no Mercado Livre e na Shopee: toda venda, de qualquer canal, desconta do mesmo estoque, e o sistema barra a venda que daria prejuízo ou que deixaria um marketplace vender a última peça.
 
-Projeto Final da disciplina de Backend (Engenharia de Software, SATC). **Etapa 1: arquitetura do backend.** Feito em **Go**, com a autorização do professor para usar outra linguagem. A seção [Go no lugar de Java](#go-no-lugar-de-java) mostra onde cada critério da revisão aparece no projeto.
+Projeto da disciplina de Backend (Engenharia de Software, SATC). **Etapa 1: arquitetura do backend.** Feito em **Go**, com a autorização do professor para usar outra linguagem. A seção [Go no lugar de Java](#go-no-lugar-de-java) mostra onde cada critério da revisão aparece no projeto.
 
 ## Índice
 
